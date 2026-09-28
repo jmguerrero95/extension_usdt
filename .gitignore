@@ -1,0 +1,8 @@
+.gradle/
+build/
+!build/
+build/*
+!build/libs/
+build/libs/*
+!build/libs/xelergo_generalbytes_extension.jar
+stubs/build/

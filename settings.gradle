@@ -1,0 +1,3 @@
+rootProject.name = 'xelergo-generalbytes-extension'
+
+include 'stubs'

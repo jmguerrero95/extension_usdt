@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extensions>
+    <extension class="com.xelergo.gb.extension.XelerGoExtension">
+        <wallet prefix="xelergo" name="XelerGo REST wallet bridge">
+            <param name="apiProtocol" />
+            <param name="apiHost" />
+            <param name="apiPort" />
+            <param name="apiBasePath" />
+            <param sensitive="true" name="apiKey" />
+            <param name="connectTimeoutMs" />
+            <param name="readTimeoutMs" />
+            <param name="terminalIdMode" />
+            <param name="staticTerminalId" />
+            <param name="pollingSeconds" />
+            <param name="lookbackHours" />
+            <help>Formato recomendado: xelergo:https:api.midominio.com:443:/api:CAS_API_KEY:5000:10000:terminalSerial::15:72. apiBasePath debe ser solo el prefijo montado delante de /api/v1/cas (por ejemplo vacio, / o /api). terminalIdMode puede ser terminalSerial o static.</help>
+            <cryptocurrency>USDTTRON</cryptocurrency>
+        </wallet>
+    </extension>
+</extensions>

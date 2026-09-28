@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.xelergo.gb'
+version = '1.0.0'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.release = 8
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+def officialRepoDir = System.getenv('BATM_PUBLIC_REPO')
+    ? file(System.getenv('BATM_PUBLIC_REPO'))
+    : file('../../batm_public_official')
+def hasOfficialRepoDir = officialRepoDir.exists() && officialRepoDir.isDirectory()
+
+dependencies {
+    // Local stubs keep the project self-contained for compile/test.
+    // The additional check below validates the public API surface used by XelerGo
+    // against files from the official batm_public repository.
+    // It is not a full binary-compatibility proof against a running CAS server.
+    compileOnly project(':stubs')
+    compileOnly 'org.slf4j:slf4j-api:1.7.36'
+    testImplementation project(':stubs')
+    testImplementation 'org.slf4j:slf4j-api:1.7.36'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.13'
+}
+
+jar {
+    archiveFileName = 'xelergo_generalbytes_extension.jar'
+}
+
+tasks.register('runExtensionTests', JavaExec) {
+    group = 'verification'
+    description = 'Runs lightweight extension unit tests without external dependencies.'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.xelergo.gb.extension.ExtensionTestSuite'
+}
+
+tasks.register('verifyOfficialGbApiSurfaceChecks', JavaExec) {
+    group = 'verification'
+    description = 'Checks the subset of GENERAL BYTES Open Extensions API surface used by XelerGo against the official batm_public repository.'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.xelergo.gb.extension.ExtensionTestSuite'
+    systemProperty 'xelergo.requireOfficialApiSurfaceRepo', 'true'
+}
+
+tasks.named('check') {
+    if (hasOfficialRepoDir) {
+        dependsOn tasks.named('verifyOfficialGbApiSurfaceChecks')
+    }
+}
+
+test {
+    dependsOn tasks.named('runExtensionTests')
+    enabled = false
+}
